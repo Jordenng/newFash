@@ -2,9 +2,16 @@ const express = require('express')
 const app = express()
 const mongoose = require('mongoose')
 const path = require('path')
-const Clothes = require('./models/cloths')
+const Campground = require('./models/campgrounds')
+const morgan = require('morgan')
 
-mongoose.connect('mongodb://localhost:27017/fash',{
+app.use(morgan('tiny'))
+
+app.use((req,res,next)=>{
+    console.log("hello")
+    next();
+})
+mongoose.connect('mongodb://localhost:27017/campgrounds',{
     useNewUrlParser: true,
     useUnifiedTopology:true
 })
@@ -22,12 +29,15 @@ app.get('/',(req,res)=>{
     res.render('home')
 })
 
-app.get('/fash',async(req,res)=>{
-    const cloths = new Clothes({
+// app.get('/dogs',(req,res)=>{
+//     res.render('home')
+// })
+app.get('/campgrounds',async(req,res)=>{
+    const campground = new Campground({
         title: 'Shirt'})
-        await cloths.save()
-    res.send(cloths)
+        await campground.save()
+    res.send(campground)
 })
-app.listen(8080,()=>{
+app.listen(3000,()=>{
     console.log("LISTENING ON PORT 8080")
 })

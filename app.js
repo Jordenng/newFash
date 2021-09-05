@@ -7,9 +7,15 @@ const morgan = require('morgan')
 
 app.use(morgan('tiny'))
 
+
 app.use((req,res,next)=>{
-    console.log("hello")
+    console.log(req.method.toUpperCase(), req.path)
     next();
+});
+
+app.use('/dogs',(req,res,next)=>{
+    console.log("i love dogs")
+    next()
 })
 mongoose.connect('mongodb://localhost:27017/campgrounds',{
     useNewUrlParser: true,
@@ -37,6 +43,10 @@ app.get('/campgrounds',async(req,res)=>{
         title: 'Shirt'})
         await campground.save()
     res.send(campground)
+})
+
+app.use((req,res)=>{
+    res.status(404).send("Not Found!")
 })
 app.listen(3000,()=>{
     console.log("LISTENING ON PORT 8080")

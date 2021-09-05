@@ -31,23 +31,37 @@ db.once("open",()=>{
 app.set('view engine','ejs')
 app.set('views',path.join(__dirname,'views'))
 
-app.get('/',(req,res)=>{
-    res.render('home')
-})
-
-// app.get('/dogs',(req,res)=>{
+// app.get('/',(req,res)=>{
 //     res.render('home')
 // })
-app.get('/campgrounds',async(req,res)=>{
-    const campground = new Campground({
-        title: 'Shirt'})
-        await campground.save()
-    res.send(campground)
+
+
+// app.get('/campgrounds',async(req,res)=>{
+//     const campground = new Campground({
+//         title: 'Shirt'})
+//         await campground.save()
+//     res.send(campground)
+// })
+
+const verifyPassword = ((req,res,next)=>{
+    const {password} = req.query;
+    if (password === 'chicken'){
+        next();
+    }
+    res.send("sorry you need a password")
 })
 
+app.get('/dogs',verifyPassword,(req,res)=>{
+    res.send("woof")
+})
+
+app.get('/secret',verifyPassword,(req,res)=>{
+    res.send("my secret is.. you will never know.")
+})
 app.use((req,res)=>{
     res.status(404).send("Not Found!")
 })
+
 app.listen(3000,()=>{
     console.log("LISTENING ON PORT 8080")
 })

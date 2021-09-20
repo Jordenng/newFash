@@ -3,18 +3,9 @@ const mongoose = require('mongoose')
 const path = require('path')
 const Campground = require('./models/campgrounds')
 const morgan = require('morgan')
+const methodOverride = require("method-override")
+const ejsMate = require("ejs-mate")
 
-
-
-// app.use((req,res,next)=>{
-//     console.log(req.method.toUpperCase(), req.path)
-//     next();
-// });
-
-// app.use('/dogs',(req,res,next)=>{
-//     console.log("i love dogs")
-//     next()
-// })
 mongoose.connect('mongodb://localhost:27017/campgrounds',{
     useNewUrlParser: true,
     useUnifiedTopology:true
@@ -28,7 +19,9 @@ db.once("open",()=>{
 
 const app = express()
 
+app.engine("ejs", ejsMate)
 app.use(morgan('tiny'))
+app.use(methodOverride("_method"))
 
 app.set('view engine','ejs')
 app.set('views',path.join(__dirname,'views'))
@@ -57,8 +50,18 @@ app.post('/campgrounds',async(req,res)=>{
 
 
 app.get('/campgrounds/:id',async(req,res)=>{
-    const camp = await Campground.findById(req.params.id)
-    res.render('campgrounds/show', {camp})
+    const campground = await Campground.findById(req.params.id)
+    res.render('campgrounds/show', {campground})
+})
+
+app.get('/campgrounds/:id/edit',async(req,res)=>{
+    const campground = await Campground.findById(req.params.id)
+    res.render('campgrounds/edit', {campground})
+})
+
+app.put('/campgrounds/:id',async(req,res)=>{
+    const campground = await Campground.findByIdAndUpdate(req.params,{...req.body.campground})
+    res.redirect(`/campgrounds/${campground._id}`)
 })
 
 
@@ -82,5 +85,5 @@ app.get('/campgrounds/:id',async(req,res)=>{
 // })
 
 app.listen(3000,()=>{
-    console.log("LISTENING ON PORT 8080")
+    console.log("LISTENING ON PORT 3000")
 })

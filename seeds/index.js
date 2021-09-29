@@ -14,11 +14,18 @@ db.once("open",()=>{
 
 const seedDB = async ()=>{
     await Campground.deleteMany({})
-    for (let i=0;i<4;i++){
-        const random1000 = Math.random()
+    for (let i=0;i<50;i++){
+        const random1000 = Math.floor(Math.random()*1000);
+        const camp = new Campground({
+            image: 'https://source.unsplash.com/collection/5116602\n',
+            price: 10
+
+        })
+        await camp.save();
     }
-    const c = new Campground({title:'purple field'})
-    await c.save()
+
 }
 
-seedDB()
+seedDB().then(()=>{
+    mongoose.connection.close();
+})
